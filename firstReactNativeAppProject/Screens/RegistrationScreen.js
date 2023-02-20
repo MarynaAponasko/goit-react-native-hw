@@ -10,11 +10,13 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
+  Pressable,
   Dimensions,
 } from "react-native";
 // import * as Font from "expo-font";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import { useTogglePasswordVisibility } from "../assets/hooks/useTogglePasswordVisibility";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -29,6 +31,8 @@ const initialState = {
 const RegistrationScreen = () => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
+  const { passwordVisibility, rightText, handlePasswordVisibility } =
+    useTogglePasswordVisibility();
 
   const keyboardHide = () => {
     Keyboard.dismiss();
@@ -100,21 +104,29 @@ const RegistrationScreen = () => {
                     onSubmitEditing={() => keyboardHide()}
                   />
                 </View>
-                <TextInput
-                  style={styles.input}
-                  value={state.password}
-                  onChangeText={(value) =>
-                    setState((prevState) => ({ ...prevState, password: value }))
-                  }
-                  placeholder="Password"
-                  placeholderTextColor="#BDBDBD"
-                  textAlign="left"
-                  textContentType="password"
-                  onFocus={() => setIsShowKeyboard(true)}
-                  onSubmitEditing={() => keyboardHide()}
-                  keyboardType="default"
-                  secureTextEntry={true}
-                />
+                <View style={styles.passwordBox}>
+                  <TextInput
+                    style={styles.passwordInput}
+                    value={state.password}
+                    onChangeText={(value) =>
+                      setState((prevState) => ({
+                        ...prevState,
+                        password: value,
+                      }))
+                    }
+                    placeholder="Password"
+                    placeholderTextColor="#BDBDBD"
+                    textAlign="left"
+                    textContentType="password"
+                    onFocus={() => setIsShowKeyboard(true)}
+                    onSubmitEditing={() => keyboardHide()}
+                    keyboardType="default"
+                    secureTextEntry={passwordVisibility}
+                  />
+                  <Pressable onPress={handlePasswordVisibility}>
+                    <Text style={styles.passwordBtn}>{rightText}</Text>
+                  </Pressable>
+                </View>
                 <TouchableOpacity
                   style={styles.submitBtn}
                   activeOpacity={0.8}
@@ -174,6 +186,27 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto-Regular",
     fontSize: 16,
     color: "#212121",
+  },
+  passwordBox: {
+    borderWidth: 1,
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    borderColor: "#E8E8E8",
+    backgroundColor: "#F6F6F6",
+    height: 50,
+    borderRadius: 8,
+    padding: 16,
+    fontFamily: "Roboto-Regular",
+    fontSize: 16,
+    color: "#212121",
+  },
+  passwordInput: {
+    width: "90%",
+  },
+  passwordBtn: {
+    width: 40,
+    color: "#1B4371",
   },
   submitBtn: {
     backgroundColor: "#FF6C00",
